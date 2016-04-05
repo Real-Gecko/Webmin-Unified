@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        $header
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/unveil/1.3.0/jquery.unveil.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-submenu/2.0.3/js/bootstrap-submenu.min.js"></script>
+        <script src="unauthenticated/libs/bootstrap-table/1.10.1/bootstrap-table.min.js"></script>
+        <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-hover-dropdown/2.2.1/bootstrap-hover-dropdown.min.js"></script>-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.4/js/bootstrap-select.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+        <script src="unauthenticated/libs/bootstrap-table/1.10.1/extensions/natural-sorting/bootstrap-table-natural-sorting.min.js"></script>
+        <script src="unauthenticated/libs/bootstrap-table/1.10.1/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
+        <!--<script src="unauthenticated/libs/bootstrap-table/1.10.1/extensions/sticky-header/bootstrap-table-sticky-header.min.js"></script>-->
+        <!--<script src="unauthenticated/libs/bootstrap-table/1.10.1/extensions/natural-sorting/bootstrap-table-natural-sorting.min.js"></script>-->
+        <!--<script src="unauthenticated/js/bootstrap-table-filter-control.js"></script>-->
+        <!--<script src="unauthenticated/js/bootstrap-table-filter-control.js"></script>-->
+        <script src="unauthenticated/js/enscroll.min.js"></script>
+        <script src="unauthenticated/js/unified.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-submenu/2.0.3/css/bootstrap-submenu.min.css">
+        <link rel="stylesheet" href="unauthenticated/libs/bootstrap-table/1.10.1/bootstrap-table.min.css">
+        <!--<link rel="stylesheet" href="unauthenticated/libs/bootstrap-table/1.10.1/extensions/sticky-header/bootstrap-table-sticky-header.min.css">-->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.4/css/bootstrap-select.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
+        <link rel="stylesheet" href="unauthenticated/css/unified.css">
+    </head>
+    <body>
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="http://www.webmin.com" target="_blank">
+                        <img src="$gconfig{'webprefix'}/images/webmin-blue.svg" height="20" border="0" alt="Webmin home page">
+                    </a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <!--<ul class="nav navbar-nav">-->
+                        $categories_list
+                        $doms
+                    <!--</ul>-->
+                    <!--<ul class="nav navbar-nav">-->
+                        <!--$virtualmin_categories-->
+                    <!--</ul>-->
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>$feedback_link</li>
+                        <li>$logout_link</li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        $text{'main_header'}
+        <div id="content" class="container-fluid"></div>
+        <footer class="footer">
+            <div class="container-fluid">
+                $footer
+            </div>
+        </footer>
+        <div class="rotor">U
+            <div class="inner one"></div>
+            <div class="inner two"></div>
+            <div class="inner three"></div>
+        </div>
+        <div id="modal" class="modal fade">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-body"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">
+                            $text{'ok'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a class="scrollup"><i class="fa fa-arrow-circle-up"></i></a>
+    </body>
+</html>
