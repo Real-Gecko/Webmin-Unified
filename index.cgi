@@ -13,14 +13,13 @@ $version = &get_webmin_version();
 if ($gconfig{'real_os_type'}) {
 	if ($gconfig{'os_version'} eq "*") {
 		$ostr = $gconfig{'real_os_type'};
-		}
-	else {
+	} else {
 		$ostr = "$gconfig{'real_os_type'} $gconfig{'real_os_version'}";
-		}
 	}
-else {
+} else {
     $ostr = "$gconfig{'os_type'} $gconfig{'os_version'}";
 }
+
 &ReadParse();
 
 @visible_modules = &get_visible_module_infos();
@@ -134,8 +133,7 @@ if ($hasvirt) {
 	@doms = &virtual_server::sort_indent_domains(\@doms);
 
 	# Fall back to first owned by this user, or first in list
-	$d ||= &virtual_server::get_domain_by("user", $remote_user,
-					      "parent", "");
+	$d ||= &virtual_server::get_domain_by("user", $remote_user, "parent", "");
 	$d ||= $doms[0];
 } else {
 	$d = { 'id' => $in{'dom'} };
@@ -144,78 +142,57 @@ $did = $d ? $d->{'id'} : undef;
 
 # Webmin catetories
 
-$categories_list = "<ul class='nav navbar-nav'>";
-$categories_list .= "<li class='dropdown'><a class='dropdown-toggle' data-toggle='dropdown'\
-    data-hover='dropdown'>Webmin</a>";
+$webmin_categories .= "\
+    <li class='dropdown'>\
+        <a class='dropdown-toggle' data-toggle='dropdown' data-hover='dropdown'>Webmin</a>";
 
-$categories_list .= "<ul class='dropdown-menu'><div class='container'><ul class='nav nav-tabs'>";
+$webmin_categories .= "<ul class='dropdown-menu'>";
 
-foreach $c (@categories) {
-    local $catdesc = $text{'longcategory_'.$c};
-    local $category_name = $text{'category_'.$c};
-    $categories_list .= "<li><a href='#$category_name' data-toggle='tab'>$category_name</a></li>";
-}
-$categories_list .= "</ul><div class='tab-content'>";
-
-foreach $c (@categories) {
-    local $catdesc = $text{'longcategory_'.$c};
-    local $category_name = $text{'category_'.$c};
-    local $category_sublist = "<div id='$category_name' class='tab-pane fade'>"; #<ul class='nav'>";
+foreach $category (@categories) {
+    local $catdesc = $text{'longcategory_'.$category};
+    local $category_name = $text{'category_'.$category};
+    $webmin_categories .= "<li class='dropdown-submenu'><a href='#'>$category_name</a>";
+    local $category_sublist = "<ul class='dropdown-menu'>";
 	foreach $m (@visible_modules) {
-		next if ($m->{'category'} ne $c);
-#            		$desc = $m->{'longdesc'} || $m->{'desc'};
-		$category_sublist .= "<div class='col-md-3 col-sm-3 col-xs-4 text-center'><a class='ajax' href='/$m->{'dir'}/'>\
-        <img src=$m->{'dir'}/images/icon.gif border=0 \
-        width=48 height=48 title=\"$desc\"><br>\
-		$m->{'desc'}</a></div>";
+    	next if ($m->{'category'} ne $category);
+		$category_sublist .= "<li><a class='ajax' href='/$m->{'dir'}/'>\
+		$m->{'desc'}</a></li>";
 	}
-# 	$category_sublist .= '</ul></div>';
-	$category_sublist .= '</div>';
-    $categories_list .= "$category_sublist";
+	$category_sublist .= '</li></ul>';
+    $webmin_categories .= "$category_sublist";
 }
-
-$categories_list .= "</div></div></ul></li>";
-
-$categories_list .= "<li class='dropdown'><a class='dropdown-toggle' data-toggle='dropdown'\
-    data-hover='dropdown'>Virtualmin</a>";
-# $categories_list .= "<ul class='dropdown-menu'>";
-$categories_list .= "<ul class='dropdown-menu'><div class='container'><ul class='nav nav-tabs'>";
+$webmin_categories .= "</ul></li>";
 
 # Virtualmin Categories
 
+$virtualmin_categories = "\
+    <li class='dropdown'>\
+        <a class='dropdown-toggle' data-toggle='dropdown' data-hover='dropdown'>Virtualmin</a>";
+$virtualmin_categories .= "<ul class='dropdown-menu'>";
 
 my @buts = &virtual_server::get_all_global_links();
 my @tcats = &unique(map { $_->{'cat'} } @buts);
 foreach my $tc (@tcats) {
 	my @incat = grep { $_->{'cat'} eq $tc } @buts;
 	if ($tc) {
-		$categories_list .= "<li>\
-		<a href='#$tc' data-toggle='tab'>$incat[0]->{'catname'}</a></li>";
-    }
-}
-$categories_list .= "</ul><div class='tab-content'>";
-
-foreach my $tc (@tcats) {
-	my @incat = grep { $_->{'cat'} eq $tc } @buts;
-	if ($tc) {
-        $categories_list .= "<div id='$tc' class='tab-pane fade'>";
+		$virtualmin_categories .= "<li class='dropdown-submenu'>\
+		<a href='#'>$incat[0]->{'catname'}</a>\
+        <ul class='dropdown-menu'>";
 		foreach my $l (@incat) {
-            $categories_list .= "<div class='col-md-3 text-center'>\
-            <a class='ajax' href='$l->{'url'}'>\
-            <img src='virtual-server/images/$l->{'icon'}.png'><br>\
-            $l->{'title'}</a></div>";
+            $virtualmin_categories .= "<li><a class='ajax' href='$l->{'url'}'>\
+            $l->{'title'}</a></li>";
 	    }
-    	$categories_list .= '</div>';
-    # $categories_list .= "</li></ul>";
+    	$virtualmin_categories .= '</ul></li>';
     }
 }
+$virtualmin_categories .= "</ul></li>";
 
-$categories_list .= "</div></div></ul></li></ul>";
+# Main menu
 
-# $categories_list .= "</ul></li></ul>";
-
-
-#print $text{'main_header'};
+$main_menu = "<ul class='nav navbar-nav'>";
+$main_menu .= $webmin_categories;
+$main_menu .= $virtualmin_categories;
+$main_menu .= "</ul>";
 
 if (!@visible_modules) {
 	# user has no modules!

@@ -113,8 +113,8 @@ $(document).on('click', 'a.help', function(e) {
     })
     .done(function(response) {
         url = url.substring(0, url.lastIndexOf('/'));
-        $('#modal .modal-body').html(response);
-        $('#modal').modal();
+        $('#help-dialog .modal-body').html(response);
+        $('#help-dialog').modal();
     });
 });
 

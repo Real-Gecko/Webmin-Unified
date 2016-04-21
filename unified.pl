@@ -593,6 +593,59 @@ sub theme_ui_filebox {
             "</div></div>";
 }
 
+=head2 ui_user_textbox(name, value, [form], [disabled?], [tags])
+
+Returns HTML for an input for selecting a Unix user. Parameters are the
+same as ui_textbox.
+
+=cut
+sub theme_ui_user_textbox
+{
+#return &ui_textbox($_[0], $_[1], 13, $_[3], undef, $_[4])." "."";
+#       &user_chooser_button($_[0], 0, $_[2]);
+    local(@uinfo, @users, %ucan, %found);
+    if ($access{'uedit_mode'} == 2 || $access{'uedit_mode'} == 3) {
+    	map { $ucan{$_}++ } split(/\s+/, $access{'uedit'});
+    	}
+    setpwent();
+    while(@uinfo = getpwent()) {
+    	if ($access{'uedit_mode'} == 5 && $access{'uedit'} !~ /^\d+$/) {
+    		# Get group for matching by group name
+    		@ginfo = getgrgid($uinfo[3]);
+		}
+    	if ($access{'uedit_mode'} == 0 ||
+    	    $access{'uedit_mode'} == 2 && $ucan{$uinfo[0]} ||
+    	    $access{'uedit_mode'} == 3 && !$ucan{$uinfo[0]} ||
+    	    $access{'uedit_mode'} == 4 &&
+    		(!$access{'uedit'} || $uinfo[2] >= $access{'uedit'}) &&
+    		(!$access{'uedit2'} || $uinfo[2] <= $access{'uedit2'}) ||
+    	    $access{'uedit_mode'} == 5 &&
+            ($access{'uedit'} =~ /^\d+$/ && $uinfo[3] == $access{'uedit'} ||
+            $ginfo[0] eq $access{'uedit'})) {
+                push(@users, [ @uinfo[0] ]) if (!$found{$uinfo[0]}++);
+    		}
+	}
+    endpwent() if ($gconfig{'os_type'} ne 'hpux');
+    use Data::Dumper;
+    #return sort { $a->[0] cmp $b->[0] } @users;
+    @users = sort { $a->[0] cmp $b->[0] } @users;
+#    return "<pre>".Dumper(\@users)."</pre>";
+    return ui_select($_[0], $_[1], \@users);#, undef, undef, undef, $_[2]);
+}
+
+sub theme_group_chooser_button {
+    my $form = defined($_[2]) ? $_[2] : 0;
+    my $w = $_[1] ? 500 : 300;
+    my $h = 200;
+    if ($_[1] && $gconfig{'db_sizeusers'}) {
+    	($w, $h) = split(/x/, $gconfig{'db_sizeusers'});
+	}
+    elsif (!$_[1] && $gconfig{'db_sizeuser'}) {
+    	($w, $h) = split(/x/, $gconfig{'db_sizeuser'});
+	}
+    return "<input type=button onClick='ifield = form.$_[0]; chooser = window.open(\"$gconfig{'webprefix'}/group_chooser.cgi?multi=$_[1]&group=\"+escape(ifield.value), \"chooser\", \"toolbar=no,menubar=no,scrollbars=yes,resizable=yes,width=$w,height=$h\"); chooser.ifield = ifield; window.ifield = ifield' value=\"...\">\n";
+}
+
 sub theme_ui_yesno_radio {
     my ($name, $value, $yes, $no, $dis) = @_;
     $yes = 1 if (!defined($yes));
