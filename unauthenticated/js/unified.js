@@ -386,14 +386,12 @@ $(document).on('change', '.select-auto-submit', function(e) {
 });
 
 $(document).on('change', '#dom', function() {
-//    console.log(this.value);
     var that = this;
     $('.vlink').each(function(index, link) {
-        console.log($(this).attr('href'))
-        console.log(that.value)
         // var url = this.href;
         // $(this).attr('href', $(this).attr('href').replace(/(dom=).*?(&)/,'$1' + that.value + '$2'));
         $(this).attr('href', $(this).attr('href').replace(/(dom=)[^\&]+/,'$1' + that.value));
+        $(this).attr('href', $(this).attr('href').replace(/(parent=)[^\&]+/,'$1' + that.value));
         // this.href = newu;
         // console.log(this.href)
 //        console.log(that.value)
