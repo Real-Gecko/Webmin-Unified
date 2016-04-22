@@ -427,3 +427,8 @@ td {
 .navbar-inverse .navbar-nav > li:not(:first-child) {
     border-left:1px solid #444;
 }  
+
+.container-small {
+    width: 400px;
+    margin: 0 auto;
+}

@@ -20,6 +20,19 @@ sub theme_ui_img {
     return ("<img src='$prefix_uri/$src' class='ui_img".($class ? " ".$class : "")."' alt='$alt' ".($title ? "title='$title'" : "").($tags ? " ".$tags : "").">");
 }
 
+=head2 ui_table_start(heading, [tabletags], [cols], [&default-tds], [right-heading])
+
+Returns HTML for the start of a form block into which labelled inputs can
+be placed. By default this is implemented as a table with another table inside
+it, but themes may override this with their own layout.
+
+The parameters are :
+=item heading - Text to show at the top of the form.
+=item tabletags - HTML attributes to put in the outer <table>, typically something like width=100%.
+=item cols - Desired number of columns for labels and fields. Defaults to 4, but can be 2 for forms with lots of wide inputs.
+=item default-tds - An optional array reference of HTML attributes for the <td> tags in each row of the table.
+=item right-heading - HTML to appear in the heading, aligned to the right.
+=cut
 sub theme_ui_table_start {
     my ($heading, $tabletags, $cols, $tds, $rightheading) = @_;
     if (defined($main::ui_table_cols)) {
@@ -329,6 +342,16 @@ sub theme_ui_columns_table
     return $rv;
 }
 
+=head2 ui_form_start(script, method, [target], [tags])
+
+Returns HTML for the start of a a form that submits to some script. The
+parameters are :
+
+=item script - CGI script to submit to, like save.cgi.
+=item method - HTTP method, which must be one of 'get', 'post' or 'form-data'. If form-data is used, the target CGI must call ReadParseMime to parse parameters.
+=item target - Optional target window or frame for the form.
+=item tags - Additional HTML attributes for the form tag.
+=cut
 sub theme_ui_form_start {
     $ui_formcount ||= 0;
     my ($script, $method, $target, $tags) = @_;
@@ -420,6 +443,17 @@ sub theme_ui_table_span {
     return $rv;
 }
 
+=head2 ui_textbox(name, value, size, [disabled?], [maxlength], [tags])
+
+Returns HTML for a text input box. The parameters are :
+
+=item name - Name for this input.
+=item value - Initial contents for the text box.
+=item size - Desired width in characters.
+=item disabled - Set to 1 if this text box should be disabled by default.
+=item maxlength - Maximum length of the string the user is allowed to input.
+=item tags - Additional HTML attributes for the <input> tag.
+=cut
 sub theme_ui_textbox {
     my ($name, $value, $size, $dis, $max, $tags) = @_;
     $size = &ui_max_text_width($size);
@@ -1284,6 +1318,10 @@ sub print_virtualmin_link {
 	}
     $rv.= "\n";
     return $rv;
+}
+
+sub bootstrap_alert {
+    my $rv = '';
 }
 
 sub print_category_opener {

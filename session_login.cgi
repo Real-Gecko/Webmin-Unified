@@ -4,9 +4,9 @@
 
 BEGIN { push(@INC, ".."); };
 use WebminCore;
+require './unified/unified.pl';
 
 $pragma_no_cache = 1;
-#$ENV{'MINISERV_INTERNAL'} || die "Can only be called by miniserv.pl";
 &init_config();
 &ReadParse();
 if ($gconfig{'loginbanner'} && $ENV{'HTTP_COOKIE'} !~ /banner=1/ &&
@@ -19,10 +19,10 @@ if ($gconfig{'loginbanner'} && $ENV{'HTTP_COOKIE'} !~ /banner=1/ &&
 	while(<BANNER>) {
 		s/LOGINURL/$url/g;
 		print;
-		}
+	}
 	close(BANNER);
 	return;
-	}
+}
 $sec = uc($ENV{'HTTPS'}) eq 'ON' ? "; secure" : "";
 if (!$config{'no_httponly'}) {
 	$sec .= "; httpOnly";
@@ -34,99 +34,56 @@ print "Set-Cookie: $sidname=x; path=/$sec\r\n" if ($in{'logout'});
 print "Set-Cookie: testing=1; path=/$sec\r\n";
 $title = $text{'session_header'};
 if ($gconfig{'showhost'}) {
-        $title = &get_display_hostname()." : ".$title;
-	}
-&ui_print_unbuffered_header(
-	undef, undef, undef, undef, undef, 1, 1, undef,
-	"<title>$title</title>",
-	"onLoad='document.forms[0].pass.value = \"\"; ".
-	"document.forms[0].user.focus()'");
+    $title = &get_display_hostname()." : ".$title;
+}
 
-# print <<HEADER;
-# <meta http-equiv=\"Content-Type\" ", "content=\"text/html; Charset=$charset\">
-# <link rel='icon' href='$gconfig{'webprefix'}/images/webmin_icon.png' type='image/png'>
-# <link rel="stylesheet" href="unauthenticated/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css">
-# HEADER
+&header();
 
-if ($tconfig{'inframe'}) {
-	# Framed themes lose original page
-	$in{'page'} = "/";
-	}
-
-print "<center>\n";
 if (defined($in{'failed'})) {
 	if ($in{'twofactor_msg'}) {
-		print "<h3>",&text('session_twofailed',
-			&html_escape($in{'twofactor_msg'})),"</h3><p></p>\n";
-		}
-	else {
-		print "<h3>$text{'session_failed'}</h3><p></p>\n";
-		}
+		$login_message = "<div class='alert alert-danger text-center'>".&text('session_twofailed'.
+			&html_escape($in{'twofactor_msg'}))."</div>\n";
+	} else {
+		$login_message = "<div class='alert alert-danger text-center'>$text{'session_failed'}</div>";
 	}
-elsif ($in{'logout'}) {
-	print "<h3>$text{'session_logout'}</h3><p></p>\n";
-	}
-elsif ($in{'timed_out'}) {
-	print "<h3>",&text('session_timed_out', int($in{'timed_out'}/60)),"</h3><p></p>\n";
-	}
-print "$text{'session_prefix'}\n";
-
-print &ui_form_start("$gconfig{'webprefix'}/session_login.cgi", "post");
-print &ui_hidden("page", $in{'page'});
-print &ui_table_start($text{'session_header'},
-		      "width=40% class='loginform'", 2);
+} elsif ($in{'logout'}) {
+	$login_message = "<div class='alert alert-warning text-center'>$text{'session_logout'}</div>";
+} elsif ($in{'timed_out'}) {
+	$login_message = "<div class='alert alert-danger text-center'>".&text('session_timed_out', int($in{'timed_out'}/60))."</div>";
+}
 
 # Login message
 if ($gconfig{'realname'}) {
 	$host = &get_display_hostname();
-	}
-else {
+} else {
 	$host = $ENV{'HTTP_HOST'};
 	$host =~ s/:\d+//g;
 	$host = &html_escape($host);
-	}
-print &ui_table_row(undef,
-      &text($gconfig{'nohostname'} ? 'session_mesg2' : 'session_mesg',
-	    "<tt>$host</tt>"), 2, [ "align=center", "align=center" ]);
+}
+
+$session_mesg = "<p class='bg-info'>".
+                &text($gconfig{'nohostname'} ? 'session_mesg2' : 'session_mesg', "<tt>$host</tt>").
+                "</p>";
 
 # Username and password
 $tags = $gconfig{'noremember'} ? "autocomplete=off" : "";
-print &ui_table_row($text{'session_user'},
-	&ui_textbox("user", $in{'failed'}, 20, 0, undef, $tags));
-print &ui_table_row($text{'session_pass'},
-	&ui_password("pass", undef, 20, 0, undef, $tags));
 
 # Two-factor token, for users that have it
 if ($miniserv{'twofactor_provider'}) {
-	print &ui_table_row($text{'session_twofactor'},
-		&ui_textbox("twofactor", undef, 20, 0, undef,
-			    "autocomplete=off"));
-	}
+	$two_factor .= $text{'session_twofactor'}.
+	            &ui_textbox("twofactor", undef, 20, 0, undef, "autocomplete=off");
+}
 
 # Remember session cookie?
 if (!$gconfig{'noremember'}) {
-	print &ui_table_row(" ",
-		&ui_checkbox("save", 1, $text{'session_save'}, 0));
-	}
+    $session_save = "\
+        <div class='form-group'>\
+        <div class='checkbox'>\
+        <label>\
+        <input type='checkbox' name='save'> $text{'session_save'}\
+        </label>\
+        </div>\
+        </div>";
+}
 
-print &ui_table_end(),"\n";
-print &ui_submit($text{'session_login'});
-print &ui_reset($text{'session_clear'});
-print &ui_form_end();
-print "</center>\n";
-
-print "$text{'session_postfix'}\n";
-
-# Output frame-detection Javascript, if theme uses frames
-if ($tconfig{'inframe'}) {
-	print <<EOF;
-<script>
-if (window != window.top) {
-	window.top.location = window.location;
-	}
-</script>
-EOF
-	}
-
-&ui_print_footer();
-
+print_template('login.html');
