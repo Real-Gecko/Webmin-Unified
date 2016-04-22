@@ -432,3 +432,8 @@ td {
     width: 400px;
     margin: 0 auto;
 }
+
+.navbar .bootstrap-select {
+    padding-top: 9px;
+    padding-left: 10px;
+}
