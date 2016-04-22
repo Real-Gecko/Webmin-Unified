@@ -156,7 +156,10 @@ foreach $category (@categories) {
     local $category_sublist = "<ul class='dropdown-menu'>";
 	foreach $m (@visible_modules) {
     	next if ($m->{'category'} ne $category);
-		$category_sublist .= "<li><a class='ajax' href='/$m->{'dir'}/'>\
+		$category_sublist .= "<li>\
+		<a class='ajax' href='/$m->{'dir'}/'>\
+        <img src=$m->{'dir'}/images/icon.gif border=0 \
+        width=24 height=24 title=\"$desc\">\
 		$m->{'desc'}</a></li>";
 	}
 	$category_sublist .= '</li></ul>';
@@ -180,7 +183,9 @@ foreach my $tc (@tcats) {
 		<a href='#'>$incat[0]->{'catname'}</a>\
         <ul class='dropdown-menu'>";
 		foreach my $l (@incat) {
-            $virtualmin_categories .= "<li><a class='ajax' href='$l->{'url'}'>\
+            $virtualmin_categories .= "<li>\
+            <a class='ajax' href='$l->{'url'}'>\
+            <img src='virtual-server/images/$l->{'icon'}.png' width='24' height='24'>\
             $l->{'title'}</a></li>";
 	    }
     	$virtualmin_categories .= '</ul></li>';
