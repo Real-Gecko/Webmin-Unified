@@ -290,6 +290,17 @@ $(document).ready(function() {
         e.stopPropagation();
         $(this).tab('show');
     });
+
+    /* Make domain selector cool */
+    $('select').each(function(index, select) {
+        var liveSearch = select.length > 8;
+        $(select).selectpicker({
+            style: 'btn-default btn-sm',
+            size: 8,
+            liveSearch: liveSearch,
+            actionsBox: true
+        });
+    })
 });
 
 function updateContent(response, url) {

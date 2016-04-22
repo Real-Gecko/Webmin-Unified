@@ -1160,10 +1160,10 @@ sub list_virtualmin_domains {
 		}
     	else {
     		# Show menu of domains
-    		my $sel;
-    		if (-r "$root_directory/virtual-server/summary_domain.cgi") {
-    			$sel = "; window.parent.frames[1].location = ".
-    			       "\"virtual-server/summary_domain.cgi?dom=\"+this.value";
+            my $sel;
+            if (-r "$root_directory/virtual-server/summary_domain.cgi") {
+                $sel = "; window.parent.frames[1].location = ".
+                       "\"virtual-server/summary_domain.cgi?dom=\"+this.value";
 			}
 #            $rv.= "<form class='navbar-form navbar-left'>";
 #            $rv.= "<div class='form-group'>";
@@ -1187,7 +1187,7 @@ sub list_virtualmin_domains {
 		}
 #    	$rv .= "</div>\n";
         $rv.= '<ul class="nav navbar-nav"><li class="dropdown">'.
-        '<a data-hover="dropdown" data-toggle="dropdown" class="dropdown-toggle" aria-expanded="false">Domain</a>'.
+        '<a data-hover="dropdown" data-toggle="dropdown" class="dropdown-toggle" aria-expanded="false">VServer</a>'.
         '<ul class="dropdown-menu">';
     	if (!$d) {
     		if ($in{'dname'}) {
@@ -1206,7 +1206,7 @@ sub list_virtualmin_domains {
     			$rv.= &print_virtualmin_link(
     				{ 'url' => "virtual-server/domain_form.cgi?".
     					   "generic=1&amp;gparent=$d->{'id'}",
-    				  'title' => $text{'left_generic'} },
+    				  'title' => $vserver_lang{'form_title'} },
     				'leftlink', $d);
 			}
     		else {
@@ -1318,10 +1318,6 @@ sub print_virtualmin_link {
 	}
     $rv.= "\n";
     return $rv;
-}
-
-sub bootstrap_alert {
-    my $rv = '';
 }
 
 sub print_category_opener {

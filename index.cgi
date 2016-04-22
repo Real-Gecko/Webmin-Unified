@@ -74,6 +74,7 @@ $hasvirt = &foreign_available("virtual-server");
 if ($hasvirt) {
 	%minfo = &get_module_info("virtual-server");
 	%vconfig = &foreign_config("virtual-server");
+    %vserver_lang = load_language('virtual-server');
 	$hasvirt = 0 if ($minfo{'version'} < 2.99);
 }
 
