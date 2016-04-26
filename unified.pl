@@ -1167,7 +1167,7 @@ sub list_virtualmin_domains {
 			}
 #            $rv.= "<form class='navbar-form navbar-left'>";
 #            $rv.= "<div class='form-group'>";
-    		$rv.= &ui_select("dom", $did,
+    		$rv.= &ui_select("domain-selector", $did,
     			[ map { [ $_->{'id'},
     				  ("&nbsp;&nbsp;" x $_->{'indent'}).
     				  &virtual_server::shorten_domain_name($_),

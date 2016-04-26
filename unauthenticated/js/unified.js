@@ -386,7 +386,7 @@ $(document).on('change', '.select-auto-submit', function(e) {
 });
 
 /* Dynamically reload virtul server menu */
-$(document).on('change', '#dom', function() {
+$(document).on('change', '#domain-selector', function() {
     var that = this;
     // $('.vlink').each(function(index, link) {
     //     $(this).attr('href', $(this).attr('href').replace(/(dom=)[^\&]+/,'$1' + that.value));
@@ -406,17 +406,24 @@ $(document).on('change', '#dom', function() {
     .done(function(response) {
         $('#vserver-doms').html(response);
         /* Make domain selector cool */
-        $('select').each(function(index, select) {
-            var liveSearch = select.length > 8;
-            $(select).selectpicker({
-                style: 'btn-default btn-sm',
-                size: 8,
-                liveSearch: liveSearch,
-                actionsBox: true
-            });
+        // $('#vserver-doms select').each(function(index, select) {
+        //     var liveSearch = select.length > 8;
+            // $(select).selectpicker({
+            //     style: 'btn-default btn-sm',
+            //     size: 8,
+            //     liveSearch: liveSearch,
+            //     actionsBox: true
+            // });
+        // });
+        var liveSearch = $('#domain-selector')[0].length > 8;
+        $('#domain-selector').selectpicker({
+            style: 'btn-default btn-sm',
+            size: 8,
+            liveSearch: liveSearch,
+            actionsBox: true
         });
         /* Also make dropdown toggle on hover */
-        $('#vserver-doms .dropdown-toggle').dropdownHover();
+        $('#vserver-doms [data-hover="dropdown"]').dropdownHover();
     })
     .always(function() {
         // $('#content').stop(true, true).scrollTop(0).fadeTo('fast', 1);
