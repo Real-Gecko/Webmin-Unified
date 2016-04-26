@@ -1155,7 +1155,7 @@ sub list_virtualmin_domains {
     	if ($virtual_server::config{'display_max'} &&
     	    @doms > $virtual_server::config{'display_max'}) {
     		# Show text field for domain name
-    		$rv.= $text{'left_dname'};
+    		$rv.= $vserver_lang{'left_dname'};
     		$rv.= &ui_textbox("dname", $d ? $d->{'dom'} : $in{'dname'}, 15);
 		}
     	else {
@@ -1261,10 +1261,10 @@ sub list_virtualmin_domains {
     	# No domains
 #    	$rv .= "<div class='leftlink'>";
     	if (@alldoms) {
-    		$rv .= $text{'left_noaccess'};
+    		$rv .= $vserver_lang{'left_noaccess'};
 		}
     	else {
-    		$rv .= $text{'left_nodoms'};
+    		$rv .= $vserver_lang{'left_nodoms'};
 		}
 #    	$rv .= "</div>\n";
     
@@ -1272,7 +1272,7 @@ sub list_virtualmin_domains {
     	if (&virtual_server::can_create_master_servers() ||
     	    &virtual_server::can_create_sub_servers()) {
     # 		$rv .= "<div class='leftlink'><a href='virtual-server/domain_form.cgi?generic=1' target=right>$text{'left_generic'}</a></div>\n";
-    		$rv .= "<a href='virtual-server/domain_form.cgi?generic=1' target=right>$text{'left_generic'}</a>\n";
+    		$rv .= "<a href='virtual-server/domain_form.cgi?generic=1' target=right>$vserver_lang{'left_generic'}</a>\n";
 		}
 	}
     elsif ($mode eq "vm2" && @servers) {
@@ -1291,10 +1291,10 @@ sub list_virtualmin_domains {
     	# No servers
 #    	$rv .= "<div class='leftlink'>";
     	if (@allservers) {
-    		$rv .= $text{'left_novm2access'};
+    		$rv .= $vserver_lang{'left_novm2access'};
 		}
     	else {
-    		$rv .= $text{'left_novm2'};
+    		$rv .= $vserver_lang{'left_novm2'};
 		}
 #    	$rv .= "</div>\n";
 	}
@@ -1328,7 +1328,7 @@ sub print_category_opener {
     $others = "&$others" if ($others);
     $others .= "&amp;dom=$did";
     $others .= "&amp;mode=$mode";
-    $label = $c eq "others" ? $text{'left_others'} : $label;
+    $label = $c eq "others" ? $vserver_lang{'left_others'} : $label;
     
     # Show link to close or open catgory
 #    $rv.= "<div class='linkwithicon'>";

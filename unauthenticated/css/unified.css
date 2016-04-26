@@ -441,3 +441,7 @@ td {
 .help {
     /*margin-bottom: 2px;*/
 }
+
+#vserver-doms {
+    display: inline;
+}

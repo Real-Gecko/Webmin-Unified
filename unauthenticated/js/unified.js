@@ -385,35 +385,58 @@ $(document).on('change', '.select-auto-submit', function(e) {
 //    e.target.form.submit();
 });
 
+/* Dynamically reload virtul server menu */
 $(document).on('change', '#dom', function() {
     var that = this;
-    $('.vlink').each(function(index, link) {
-        // var url = this.href;
-        // $(this).attr('href', $(this).attr('href').replace(/(dom=).*?(&)/,'$1' + that.value + '$2'));
-        $(this).attr('href', $(this).attr('href').replace(/(dom=)[^\&]+/,'$1' + that.value));
-        $(this).attr('href', $(this).attr('href').replace(/(parent=)[^\&]+/,'$1' + that.value));
-        // this.href = newu;
-        // console.log(this.href)
-//        console.log(that.value)
-//        $(link).attr('data-domain', that.value);
-//        console.log($(link))
+    // $('.vlink').each(function(index, link) {
+    //     $(this).attr('href', $(this).attr('href').replace(/(dom=)[^\&]+/,'$1' + that.value));
+    //     $(this).attr('href', $(this).attr('href').replace(/(parent=)[^\&]+/,'$1' + that.value));
+    // });
+    var url = 'get_domain_menu.cgi?dom=' + this.value;
+    $('#content').fadeTo('fast', 0);
+    $('.enscroll-track').fadeTo('fast', 0);
+    $('.rotor').fadeIn('fast');
+    $('#content').html('');
+    var progress = 0;
+    $.ajax({
+        url: url,
+        async: true,
+        dataType: 'text',
+    })
+    .done(function(response) {
+        $('#vserver-doms').html(response);
+        /* Make domain selector cool */
+        $('select').each(function(index, select) {
+            var liveSearch = select.length > 8;
+            $(select).selectpicker({
+                style: 'btn-default btn-sm',
+                size: 8,
+                liveSearch: liveSearch,
+                actionsBox: true
+            });
+        });
+        /* Also make dropdown toggle on hover */
+        $('#vserver-doms .dropdown-toggle').dropdownHover();
+    })
+    .always(function() {
+        // $('#content').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+        // $('.enscroll-track').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+        // $('.rotor').fadeOut('fast');
+        /* Navigate to domain edition form */
+        var url = 'virtual-server/edit_domain.cgi?dom=' + that.value;
+        $.ajax({
+            url: url,
+            async: true,
+            dataType: 'text',
+        })
+        .done(function(response) {
+            $('#content').html(response);
+            updateContent(response, url);
+        })
+        .always(function(response) {
+            $('#content').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+            $('.enscroll-track').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+            $('.rotor').fadeOut('fast');
+        });
     });
-    // e.preventDefault();
-    // var url = $(this).attr('href');
-    // $('#content').fadeTo('fast', 0);
-    // $('.enscroll-track').fadeTo('fast', 0);
-    // $('.rotor').fadeIn('fast');
-//     $.ajax({
-//         url: '/unified/get_domain.cgi?mode=virtualmin&dom=' + that.value,
-//         async: true,
-//         dataType: 'html'
-//     })
-//     .done(function(response) {
-// //        updateContent(response, url);
-//     })
-//     .always(function() {
-//         // $('#content').stop(true, true).scrollTop(0).fadeTo('fast', 1);
-//         // $('.enscroll-track').stop(true, true).scrollTop(0).fadeTo('fast', 1);
-//         // $('.rotor').fadeOut('fast');
-//     });
 });
