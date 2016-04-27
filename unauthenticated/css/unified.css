@@ -32,6 +32,7 @@ body {
 
 a:focus, a:hover, a:active {
     outline: 0;
+    text-decoration: none;
 }
 
 a {
@@ -440,8 +441,15 @@ td {
 
 .help {
     /*margin-bottom: 2px;*/
+    height: 30px;
+    line-height: 30px;
+    vertical-align: middle;
 }
 
 #vserver-doms {
     display: inline;
+}
+
+textarea {
+    font-family: monospace;
 }

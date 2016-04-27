@@ -1,3 +1,18 @@
+window.onerror = function(errMsg, url, lineNumber, colNum, err) {
+    // alert("Error caught");
+    $('#content').html(
+        url + ' - ' +
+        lineNumber + ': ' +
+        '<strong>' +
+        errMsg +
+        '</strong>'
+    );
+    $('#content').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+    $('.enscroll-track').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+    $('.rotor').fadeOut('fast');
+    console.log(err);
+};
+
 $(document).on('submit', 'form', function (e) {
     e.preventDefault();
     $('#content').fadeTo('fast', 0);
@@ -240,7 +255,8 @@ $(document).ready(function() {
     $('.rotor').hide();
     $('#content').enscroll({
         addPaddingToPane: false,
-        scrollIncrement: 50
+        scrollIncrement: 50,
+        // horizontalScrolling: true
     });
 
     $('#content').scroll(function () {
@@ -311,27 +327,54 @@ function updateContent(response, url) {
     $('#content [data-toggle="table"]').each(function(index, table) {
         // Skip tables with no header
         var head = $(table).has('thead')[0];
+        // console.log(table)
         if(head) {
-            $(table).bootstrapTable({
-                classes: 'table-condensed table-hover table-no-bordered',
-                escape: false,
-                filterControl: true,
-                // stickyHeader: true,
-                // stickyHeaderOffsetY: '600px'
-            });
-            $(table).find('.filterControl input').addClass('input-sm');
+            try {
+                $(table).bootstrapTable({
+                    classes: 'table-condensed table-hover table-no-bordered',
+                    escape: false,
+                    filterControl: true,
+                    // stickyHeader: true,
+                    // stickyHeaderOffsetY: '600px'
+                });
+                $(table).find('.filterControl input').addClass('input-sm');
+            } catch(err) {
+                console.log(err);
+            }
         }
+    });
+    
+    /* Enscroll textareas */
+    $('textarea').enscroll({
+        addPaddingToPane: false,
+        scrollIncrement: 50,
     });
 
     /* Make selects rock */
     $('#content select').each(function(index, select) {
+        // console.log(select.id);
         var liveSearch = select.length > 8;
-        $(select).selectpicker({
-            style: 'btn-default btn-sm',
-            size: 8,
-            liveSearch: liveSearch,
-            actionsBox: true
-        });
+        // Опять костыли
+        if(select.id != 'mins' && select.id != 'hours' && select.id != 'days') {
+            $(select).selectpicker({
+                style: 'btn-default btn-sm',
+                size: 8,
+                liveSearch: liveSearch,
+                actionsBox: true
+            });
+            // Нужно больше костылей
+            $(select).attrchange({
+                trackValues: true,
+                callback: function(e) {
+                    console.log(e)
+                    if(e.attributeName == 'disabled' && e.newValue == 'disabled') {
+                        $('[data-id="' + select.id + '"').addClass('disabled')
+                    } else if(e.attributeName == 'disabled' && e.newValue == undefined) {
+                        $('[data-id="' + select.id + '"').removeClass('disabled')
+                    }
+                }
+            });
+        }
     })
     .on('shown.bs.select', function() {
          $(this).prev('div.dropdown-menu').find('ul').enscroll({

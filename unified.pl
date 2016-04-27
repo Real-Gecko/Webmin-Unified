@@ -689,11 +689,13 @@ sub theme_ui_yesno_radio {
 }
 
 sub theme_ui_buttons_start {
-    return "<div class='btn-group' role='group'>\n";
+    # return "<div class='btn-group' role='group'>\n";
+    return "";
 }
 
 sub theme_ui_buttons_end {
-    return "</div>\n";
+    # return "</div>\n";
+    return "";
 }
 
 sub theme_ui_post_header {
@@ -733,7 +735,7 @@ sub theme_ui_print_header {
 		print "</td></tr> <tr>\n";
 	}
 	print "<td id='headln2l' width=15% valign=top align=left>";
-	print "<div class='btn-group'>";
+# 	print "<div class='btn-group'>";
 	if ($ENV{'HTTP_WEBMIN_SERVERS'} && !$tconfig{'framed'}) {
 		print "<a href='$ENV{'HTTP_WEBMIN_SERVERS'}'>",
 		      "$text{'header_servers'}</a><br>\n";
@@ -784,7 +786,7 @@ sub theme_ui_print_header {
 			      $text{'header_config'},"</a>";
 		}
 	}
-	print "</div>";
+# 	print "</div>";
 	print "</td>\n";
 	if ($_[2]) {
 		# Title is a single image
@@ -902,8 +904,10 @@ sub theme_hlink {
     my $mod = $_[2] ? $_[2] : &get_module_name();
     my $width = $_[3] || $tconfig{'help_width'} || $gconfig{'help_width'} || 600;
     my $height = $_[4] || $tconfig{'help_height'} || $gconfig{'help_height'} || 400;
-    return "<a class='help btn btn-info btn-sm' href=\"$gconfig{'webprefix'}/help.cgi/$mod/$_[1]\">\
-    <i class='fa fa-question'></i> $_[0]</a>";
+    # return "<a class='help btn btn-info btn-sm' href=\"$gconfig{'webprefix'}/help.cgi/$mod/$_[1]\">\
+    # <i class='fa fa-question'></i> $_[0]</a>";
+    return "<a class='help' href=\"$gconfig{'webprefix'}/help.cgi/$mod/$_[1]\">\
+    <i class='fa fa-question btn btn-info btn-xs'></i> $_[0]</a>";
 }
 
 sub theme_ui_links_row {
@@ -935,7 +939,7 @@ sub theme_ui_form_end {
     my ($buttons, $width, $nojs) = @_;
     my $rv;
     if ($buttons && @$buttons) {
-    	$rv .= "<div class='btn-group'>\n";
+    # 	$rv .= "<div class='btn-group'>\n";
     	my $b;
     	foreach $b (@$buttons) {
     		if (ref($b)) {
@@ -946,7 +950,7 @@ sub theme_ui_form_end {
                 $rv .= "$b\n";
 			}
         }
-        $rv .= "</div>";
+        # $rv .= "</div>";
 	}
     $rv .= "</form>\n";
     return $rv;
@@ -1109,6 +1113,140 @@ sub theme_ui_date_input {
 
 sub theme_date_chooser_button {
     return '';
+}
+
+sub theme_get_times_input {
+    # return &theme_get_times_input(@_) if (defined(&theme_get_times_input));
+    my ($job, $nospecial, $width, $msg) = @_;
+    $width ||= 2;
+    
+    # Javascript to disable and enable fields
+my $rv = <<EOF;
+    <script>
+    function enable_cron_fields(name, form, ena)
+    {
+    var els = form.elements[name];
+    els.disabled = !ena;
+    for(i=0; i<els.length; i++) {
+      els[i].disabled = !ena;
+      }
+    change_special_mode(form, 0);
+    }
+    
+    function change_special_mode(form, special)
+    {
+    form.special_def[0].checked = special;
+    form.special_def[1].checked = !special;
+    }
+    </script>
+EOF
+    
+    if ($config{'vixie_cron'} && (!$nospecial || $job->{'special'})) {
+    	# Allow selection of special @ times
+    	my $sp = $job->{'special'} eq 'midnight' ? 'daily' :
+    		 $job->{'special'} eq 'annually' ? 'yearly' : $job->{'special'};
+    	my $specialsel = &ui_select("special", $sp,
+    			[ map { [ $_, $text{'edit_special_'.$_} ] }
+    			      &list_cron_specials() ],
+    			1, 0, 0, 0, "onChange='change_special_mode(form, 1)'");
+    	$rv .= &ui_table_row($msg,
+    		&ui_radio("special_def", $job->{'special'} ? 1 : 0,
+    			  [ [ 1, $text{'edit_special1'}." ".$specialsel ],
+    			    [ 0, $text{'edit_special0'} ] ]),
+    			  $msg ? $width-1 : $width);
+	}
+    
+    # Section for time selections
+    my $table = &ui_columns_start([ $text{'edit_mins'}, $text{'edit_hours'},
+    				$text{'edit_days'}, $text{'edit_months'},
+    				$text{'edit_weekdays'} ], 100);
+    my @mins = (0..59);
+    my @hours = (0..23);
+    my @days = (1..31);
+    my @months = map { $text{"month_$_"}."=".$_ } (1 .. 12);
+    my @weekdays = map { $text{"day_$_"}."=".$_ } (0 .. 6);
+    my %arrmap = ( 'mins' => \@mins,
+    	       'hours' => \@hours,
+    	       'days' => \@days,
+    	       'months' => \@months,
+    	       'weekdays' => \@weekdays );
+    my @cols;
+    foreach my $arr ("mins", "hours", "days", "months", "weekdays") {
+    	# Find out which ones are being used
+    	my %inuse;
+    	my $min = ($arr =~ /days|months/ ? 1 : 0);
+    	my @arrlist = @{$arrmap{$arr}};
+    	my $max = $min+scalar(@arrlist)-1;
+    	foreach my $w (split(/,/ , $job->{$arr})) {
+    		if ($w eq "*") {
+    			# all values
+    			for($j=$min; $j<=$max; $j++) { $inuse{$j}++; }
+    			}
+    		elsif ($w =~ /^\*\/(\d+)$/) {
+    			# only every Nth
+    			for($j=$min; $j<=$max; $j+=$1) { $inuse{$j}++; }
+    			}
+    		elsif ($w =~ /^(\d+)-(\d+)\/(\d+)$/) {
+    			# only every Nth of some range
+    			for($j=$1; $j<=$2; $j+=$3) { $inuse{int($j)}++; }
+    			}
+    		elsif ($w =~ /^(\d+)-(\d+)$/) {
+    			# all of some range
+    			for($j=$1; $j<=$2; $j++) { $inuse{int($j)}++; }
+    			}
+    		else {
+    			# One value
+    			$inuse{int($w)}++;
+    			}
+    		}
+    	if ($job->{$arr} eq "*") {
+    		%inuse = ( );
+    		}
+    
+    	# Output selection list
+    	my $dis = $arr eq "mins" && $hourly_only;
+    	my $col = &ui_radio(
+    		    "all_$arr", $job->{$arr} eq "*" ||
+    				$job->{$arr} eq "" ? 1 : 0,
+    		    [ [ 1, $text{'edit_all'}."<br>",
+    			"onClick='enable_cron_fields(\"$arr\", form, 0)'" ],
+    		      [ 0, $text{'edit_selected'}."<br>",
+    			"onClick='enable_cron_fields(\"$arr\", form, 1)'" ] ],
+    		    $dis);
+    	$col .= "<table> <tr>\n";
+#         for(my $j=0; $j<@arrlist; $j+=($arr eq "mins" && $hourly_only ? 60 : 12)) {
+#                     my $jj = $j+($arr eq "mins" && $hourly_only ? 59 : 11);
+#     		if ($jj >= @arrlist) { $jj = @arrlist - 1; }
+#     		my @sec = @arrlist[$j .. $jj];
+#     		my @opts;
+#     		foreach my $v (@sec) {
+#     			if ($v =~ /^(.*)=(.*)$/) {
+#     				push(@opts, [ $2, $1 ]);
+#     				}
+#     			else {
+#     				push(@opts, [ $v, $v ]);
+#     				}
+#     			}
+#     		my $dis = $job->{$arr} eq "*" || $job->{$arr} eq "";
+#     		$col .= "<td valign=top>".
+#     			&ui_select($arr, [ keys %inuse ], \@opts,
+#     			  @sec > 12 ? ($arr eq "mins" && $hourly_only ? 1 : 12)
+#                                       : scalar(@sec),
+#     			  $arr eq "mins" && $hourly_only ? 0 : 1,
+#     			  0, $dis).
+#     			"</td>\n";
+# 		}
+        $col .= &ui_select($arr, [ keys %inuse ], \@arrlist);
+        $col .= 'lala';
+    	$col .= "</tr></table>\n";
+    	push(@cols, $col);
+	}
+    $table .= &ui_columns_row(\@cols, [ "valign=top", "valign=top", "valign=top",
+    				    "valign=top", "valign=top" ]);
+    $table .= &ui_columns_end();
+    $table .= $text{'edit_ctrl'};
+    $rv .= &ui_table_row(undef, $table, $width);
+    return $rv;
 }
 
 sub print_template {
