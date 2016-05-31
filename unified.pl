@@ -753,9 +753,9 @@ sub theme_ui_buttons_end {
 sub theme_ui_post_header {
     my ($text) = @_;
     my $rv;
-    $rv .= "<center class='ui_post_header'><font size=+1>$text</font></center>\n" if (defined($text));
+    $rv .= "<center class='ui_post_header'><h4>$text</h4></center>" if (defined($text));
     if (!$tconfig{'nohr'} && !$tconfig{'notophr'}) {
-    	$rv .= "<hr id='post_header_hr'>\n";
+    	$rv .= "<hr id='post_header_hr'>";
 	}
     return $rv;
 }
@@ -865,7 +865,7 @@ sub theme_ui_print_header {
 		print &get_html_status_line(1);
 		print "</div>";
 	}
-	print "<div class='row'>";
+	print "<div class='row content-header'>";
 	print "<div class='col-md-4'>";
 	# print "<td id='headln2l' width=15% valign=top align=left>";
 	print "<div class='btn-group'>";
@@ -933,8 +933,8 @@ sub theme_ui_print_header {
 				$tconfig{'titlesize'} : "+2";
 		# print "<td id='headln2c' align=center width=70%>",
 		print "<div class='col-md-4 text-center'>",
-		      ($ts ? "<font size=$ts>" : ""),$_[1],
-		      ($ts ? "</font>" : "");
+		      ($ts ? "<h3>" : ""),$_[1],
+		      ($ts ? "</h3>" : "");
 		print "<br>$_[10]\n" if ($_[10]);
 		print "</div>\n";
 	}
@@ -972,7 +972,7 @@ are :
 
 =cut
 sub theme_popup_header {
-    print "<h4>$_[0]</h4>\n";
+    # print "<h4>$_[0]</h4>\n";
 }
 
 sub theme_ui_print_footer {
@@ -1070,10 +1070,10 @@ sub theme_hlink {
     my $mod = $_[2] ? $_[2] : &get_module_name();
     my $width = $_[3] || $tconfig{'help_width'} || $gconfig{'help_width'} || 600;
     my $height = $_[4] || $tconfig{'help_height'} || $gconfig{'help_height'} || 400;
-    # return "<a class='help btn btn-info btn-sm' href=\"$gconfig{'webprefix'}/help.cgi/$mod/$_[1]\">\
-    # <i class='fa fa-question'></i> $_[0]</a>";
-    return "<a class='help' href=\"$gconfig{'webprefix'}/help.cgi/$mod/$_[1]\">\
-    <i class='fa fa-question btn btn-info btn-xs'></i> $_[0]</a>";
+    return "<a class='help btn btn-info btn-sm' href=\"$gconfig{'webprefix'}/help.cgi/$mod/$_[1]\">\
+    <i class='fa fa-question'></i> $_[0]</a>";
+    # return "<a class='help' href=\"$gconfig{'webprefix'}/help.cgi/$mod/$_[1]\">\
+    # <i class='fa fa-question btn btn-info btn-xs'></i> $_[0]</a>";
 }
 
 sub theme_ui_links_row {

@@ -177,7 +177,7 @@ $(document).on('click', '.chooser-open', function(e) {
                 $(table).find('.filterControl input').addClass('input-sm');
                 $(table).parent().enscroll({
                     addPaddingToPane: false,
-                    scrollIncrement: 50,
+                    scrollIncrement: 75,
                 });
             });
             $chooser.find('.modal-body select').each(function(index, select) {
@@ -239,7 +239,7 @@ $(document).on('click', 'a.chooser-url[href]', function(e) {
             $(table).find('.filterControl input').addClass('input-sm');
             $(table).parent().enscroll({
                 addPaddingToPane: false,
-                scrollIncrement: 50,
+                scrollIncrement: 75,
             });
             $chooser.data.path = path;
         });
@@ -277,8 +277,11 @@ $(document).ready(function() {
     $('.rotor').hide();
     $('#content').enscroll({
         addPaddingToPane: false,
-        scrollIncrement: 50,
+        scrollIncrement: 75,
         // horizontalScrolling: true
+		// drawScrollButtons: true,
+		// scrollUpButtonClass: 'scroll-up',
+		// scrollDownButtonClass: 'scroll-down'
     });
 
     $('#content').scroll(function () {
@@ -287,11 +290,26 @@ $(document).ready(function() {
         } else {
             $('.scrollup').fadeOut();
         }
+        console.clear();
+        console.log($(this).scrollTop(), $(window).height(), this.scrollHeight)
+
+        if ($(this).scrollTop() + $(window).height() < this.scrollHeight) {
+            $('.scrolldown').fadeIn();
+        } else {
+            $('.scrolldown').fadeOut();
+        }
     });
 
     $('.scrollup').click(function () {
         $('#content').animate({
             scrollTop: 0
+        }, 300);
+        return false;
+    });
+
+    $('.scrolldown').click(function () {
+        $('#content').animate({
+            scrollTop: $('#content')[0].scrollHeight
         }, 300);
         return false;
     });
@@ -369,7 +387,7 @@ function updateContent(response, url) {
     /* Enscroll textareas */
     $('textarea').enscroll({
         addPaddingToPane: false,
-        scrollIncrement: 50,
+        scrollIncrement: 75,
     });
 
     /* Make selects rock */

@@ -239,29 +239,41 @@ input.form-control, select.form-control, .bootstrap-select {
     clear: both;
 }
 
-/* Scroll up*/
-.scrollup {
+/* Scroll buttons */
+.scrollup, .scrolldown {
     font-size: 50px;
     color: #3C4B57;
     width: 44px;
     height: 44px;
     line-height: 45px;
     position: fixed;
-    bottom: 60px;
     right: 30px;
     display: none;
-    transition: ease color 0.3s;
+    transition: ease color 0.3s, ease opacity 0.3s;
     z-index: 1000;
+    opacity: 0.3;
 }
 
-.scrollup i {
+.scrollup {
+	top: 60px;
+}
+
+.scrolldown {
+	bottom: 60px;
+}
+
+.scrollup i, .scrolldown i {
     width: 44px;
     height: 44px;
     line-height: 45px;
     background: #fff;
     border-radius: 25px;
 }
-/* End: Scroll up */
+/* End: Scroll buttons */
+
+.scrollup:hover, .scrolldown:hover {
+	opacity: 1;
+}
 
 /* Scrollbar */
 
@@ -270,11 +282,13 @@ input.form-control, select.form-control, .bootstrap-select {
     width: 100%;
     height: calc(100vh - 120px);
 }
+
 .vertical-track {
     width: 8px;
     background-color: #ddd;
     border-radius: 4px;
 }
+
 .vertical-handle {
     width: 8px;
     background-color: #3C4B57;
@@ -440,12 +454,12 @@ td {
     padding-left: 10px;
 }
 
-.help {
+/*.help {*/
     /*margin-bottom: 2px;*/
-    height: 30px;
-    line-height: 30px;
-    vertical-align: middle;
-}
+/*    height: 30px;*/
+/*    line-height: 30px;*/
+/*    vertical-align: middle;*/
+/*}*/
 
 #vserver-doms {
     display: inline;
@@ -464,3 +478,20 @@ td label {
 .form-inline .bootstrap-select.btn-group {
     margin-bottom: 2px;
 }
+
+.content-header {
+	margin-top: 6px;
+}
+
+.content-header h3 {
+	margin: 0;
+}
+
+/*#scroll-buttons {*/
+/*	width: 15px;*/
+/*	float: left;*/
+	/*display: block;*/
+/*	height: 100%;*/
+/*	position: absolute;*/
+/*	top: 0;*/
+/*}*/
