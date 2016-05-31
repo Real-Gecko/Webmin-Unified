@@ -1,2 +1,4 @@
 functions=unified.pl
 noindex=1
+cs_header=ddd class='table-header'
+cs_table=fff class='table-row'

@@ -618,6 +618,58 @@ sub theme_file_chooser_button {
     <i class='fa fa-folder-open-o'></i></button>\n";
 }
 
+=head2 user_chooser_button(field, multiple, [form])
+
+Returns HTML for a javascript button for choosing a Unix user or users.
+The parameters are :
+
+=item field - Name of the HTML field to place the username into.
+=item multiple - Set to 1 if multiple users can be selected.
+=item form - Index of the form on the page.
+=cut
+sub theme_user_chooser_button {
+    my $form = defined($_[2]) ? $_[2] : 0;
+    my $w = $_[1] ? 500 : 300;
+    my $h = 200;
+    if ($_[1] && $gconfig{'db_sizeusers'}) {
+    	($w, $h) = split(/x/, $gconfig{'db_sizeusers'});
+	} elsif (!$_[1] && $gconfig{'db_sizeuser'}) {
+    	($w, $h) = split(/x/, $gconfig{'db_sizeuser'});
+	}
+    # return "<input type=button onClick='ifield = form.$_[0]; chooser = window.open(\"$gconfig{'webprefix'}/user_chooser.cgi?multi=$_[1]&user=\"+escape(ifield.value), \"chooser\", \"toolbar=no,menubar=no,scrollbars=yes,resizable=yes,width=$w,height=$h\"); chooser.ifield = ifield; window.ifield = ifield' value=\"...\">\n";
+    return "<button data-field='$_[0]' data-url='$gconfig{'webprefix'}/user_chooser.cgi?multi=$_[1]&user=' \
+    class='btn btn-primary btn-sm chooser-open' type='button'>\
+    <i class='fa fa-user'></i></button>\n";
+}
+
+=head2 group_chooser_button(field, multiple, [form])
+
+Returns HTML for a javascript button for choosing a Unix group or groups
+The parameters are :
+
+=item field - Name of the HTML field to place the group name into.
+
+=item multiple - Set to 1 if multiple groups can be selected.
+
+=item form - Index of the form on the page.
+
+=cut
+sub group_chooser_button {
+    return undef if (!&supports_users());
+    return &theme_group_chooser_button(@_)
+    	if (defined(&theme_group_chooser_button));
+    my $form = defined($_[2]) ? $_[2] : 0;
+    my $w = $_[1] ? 500 : 300;
+    my $h = 200;
+    if ($_[1] && $gconfig{'db_sizeusers'}) {
+    	($w, $h) = split(/x/, $gconfig{'db_sizeusers'});
+    	}
+    elsif (!$_[1] && $gconfig{'db_sizeuser'}) {
+    	($w, $h) = split(/x/, $gconfig{'db_sizeuser'});
+    	}
+    return "<input type=button onClick='ifield = form.$_[0]; chooser = window.open(\"$gconfig{'webprefix'}/group_chooser.cgi?multi=$_[1]&group=\"+escape(ifield.value), \"chooser\", \"toolbar=no,menubar=no,scrollbars=yes,resizable=yes,width=$w,height=$h\"); chooser.ifield = ifield; window.ifield = ifield' value=\"...\">\n";
+}
+
 sub theme_ui_filebox {
     my ($name, $value, $size, $dis, $max, $tags, $dironly) = @_;
     return "<div class='input-group'>".
@@ -728,14 +780,95 @@ sub theme_ui_print_header {
     	$prebody =~ s/%OS%/$os_type $os_version/g;
     	print "$prebody\n";
 	}
-	print "<table class='header' width=100%><tr>\n";
+# 	print "<table class='header' width=100%><tr>\n";
+# 	if ($gconfig{'sysinfo'} == 2 && $remote_user) {
+# 		print "<td id='headln1' colspan=3 align=center>\n";
+# 		print &get_html_status_line(1);
+# 		print "</td></tr> <tr>\n";
+# 	}
+# 	print "<td id='headln2l' width=15% valign=top align=left>";
+# # 	print "<div class='btn-group'>";
+# 	if ($ENV{'HTTP_WEBMIN_SERVERS'} && !$tconfig{'framed'}) {
+# 		print "<a href='$ENV{'HTTP_WEBMIN_SERVERS'}'>",
+# 		      "$text{'header_servers'}</a><br>\n";
+# 	}
+# 	if (!$_[6] && !$tconfig{'noindex'}) {
+# 		my @avail = &get_available_module_infos(1);
+# 		my $nolo = $ENV{'ANONYMOUS_USER'} ||
+# 			      $ENV{'SSL_USER'} || $ENV{'LOCAL_USER'} ||
+# 			      $ENV{'HTTP_USER_AGENT'} =~ /webmin/i;
+# 		if ($gconfig{'gotoone'} && $main::session_id && @avail == 1 &&
+# 		    !$nolo) {
+# 			print "<a href='$gconfig{'webprefix'}/session_login.cgi?logout=1'>",
+# 			      "$text{'main_logout'}</a><br>";
+# 		}
+# 		elsif ($gconfig{'gotoone'} && @avail == 1 && !$nolo) {
+# 			print "<a href=$gconfig{'webprefix'}/switch_user.cgi>",
+# 			      "$text{'main_switch'}</a><br>";
+# 		}
+# 		elsif (!$gconfig{'gotoone'} || @avail > 1) {
+# 			print "<a href='$gconfig{'webprefix'}/?cat=",
+# 			      $this_module_info{'category'},
+# 			      "'>$text{'header_webmin'}</a><br>\n";
+# 		}
+# 	}
+# 	if (!$_[5] && !$tconfig{'nomoduleindex'}) {
+# 		my $idx = $this_module_info{'index_link'};
+# 		my $mi = $module_index_link || "/".&get_module_name()."/$idx";
+# 		my $mt = $module_index_name || $text{'header_module'};
+# 		print "<a class='btn btn-primary btn-sm' href=\"$gconfig{'webprefix'}$mi\">\
+# 		<i class='fa fa-arrow-left'></i> $mt</a>";
+# 	}
+# 	if (ref($_[3]) eq "ARRAY" && !$ENV{'ANONYMOUS_USER'} &&
+# 	    !$tconfig{'nohelp'}) {
+# 		print &hlink($text{'header_help'}, $_[3]->[0], $_[3]->[1]),
+# 		      "<br>\n";
+# 	}
+# 	elsif (defined($_[3]) && !$ENV{'ANONYMOUS_USER'} &&
+# 	       !$tconfig{'nohelp'}) {
+# 		print &hlink($text{'header_help'}, $_[3]);
+# 	}
+# 	if ($_[4]) {
+# 		my %access = &get_module_acl();
+# 		if (!$access{'noconfig'} && !$config{'noprefs'}) {
+# 			my $cprog = $user_module_config_directory ?
+# 					"uconfig.cgi" : "config.cgi";
+# 			print "<a class='ajax btn btn-warning btn-sm' href=\"$gconfig{'webprefix'}/$cprog?",
+# 			      &get_module_name()."\"><i class='fa fa-gears'></i> ",
+# 			      $text{'header_config'},"</a>";
+# 		}
+# 	}
+# # 	print "</div>";
+# 	print "</td>\n";
+# 	if ($_[2]) {
+# 		# Title is a single image
+# 		print "<td id='headln2c' align=center width=70%>",
+# 		      "<img alt=\"$_[0]\" src=\"$prefix_uri/$_[1]\"></td>\n";
+# 	}
+# 	else {
+# 		# Title is just text
+# 		my $ts = defined($tconfig{'titlesize'}) ?
+# 				$tconfig{'titlesize'} : "+2";
+# 		print "<td id='headln2c' align=center width=70%>",
+# 		      ($ts ? "<font size=$ts>" : ""),$_[1],
+# 		      ($ts ? "</font>" : "");
+# 		print "<br>$_[10]\n" if ($_[10]);
+# 		print "</td>\n";
+# 	}
+# 	print "<td id='headln2r' width=15% valign=top align=right>";
+# 	print $_[7];
+# 	print "</td></tr></table>\n";
+#     print &ui_post_header($_[0]);
 	if ($gconfig{'sysinfo'} == 2 && $remote_user) {
-		print "<td id='headln1' colspan=3 align=center>\n";
+		# print "<div class='row'>";
+		print "<div class='col-md-12'>";
 		print &get_html_status_line(1);
-		print "</td></tr> <tr>\n";
+		print "</div>";
 	}
-	print "<td id='headln2l' width=15% valign=top align=left>";
-# 	print "<div class='btn-group'>";
+	print "<div class='row'>";
+	print "<div class='col-md-4'>";
+	# print "<td id='headln2l' width=15% valign=top align=left>";
+	print "<div class='btn-group'>";
 	if ($ENV{'HTTP_WEBMIN_SERVERS'} && !$tconfig{'framed'}) {
 		print "<a href='$ENV{'HTTP_WEBMIN_SERVERS'}'>",
 		      "$text{'header_servers'}</a><br>\n";
@@ -769,8 +902,7 @@ sub theme_ui_print_header {
 	}
 	if (ref($_[3]) eq "ARRAY" && !$ENV{'ANONYMOUS_USER'} &&
 	    !$tconfig{'nohelp'}) {
-		print &hlink($text{'header_help'}, $_[3]->[0], $_[3]->[1]),
-		      "<br>\n";
+		print &hlink($text{'header_help'}, $_[3]->[0], $_[3]->[1]);
 	}
 	elsif (defined($_[3]) && !$ENV{'ANONYMOUS_USER'} &&
 	       !$tconfig{'nohelp'}) {
@@ -786,26 +918,31 @@ sub theme_ui_print_header {
 			      $text{'header_config'},"</a>";
 		}
 	}
-# 	print "</div>";
-	print "</td>\n";
+	print "</div>";
+	print "</div>";
+	# print "</td>\n";
 	if ($_[2]) {
 		# Title is a single image
-		print "<td id='headln2c' align=center width=70%>",
-		      "<img alt=\"$_[0]\" src=\"$prefix_uri/$_[1]\"></td>\n";
+		# print "<td id='headln2c' align=center width=70%>",
+		print "<div class='col-md-4 text-center'>";
+		      "<img alt=\"$_[0]\" src=\"$prefix_uri/$_[1]\"></div>";
 	}
 	else {
 		# Title is just text
 		my $ts = defined($tconfig{'titlesize'}) ?
 				$tconfig{'titlesize'} : "+2";
-		print "<td id='headln2c' align=center width=70%>",
+		# print "<td id='headln2c' align=center width=70%>",
+		print "<div class='col-md-4 text-center'>",
 		      ($ts ? "<font size=$ts>" : ""),$_[1],
 		      ($ts ? "</font>" : "");
 		print "<br>$_[10]\n" if ($_[10]);
-		print "</td>\n";
+		print "</div>\n";
 	}
-	print "<td id='headln2r' width=15% valign=top align=right>";
+	# print "<td id='headln2r' width=15% valign=top align=right>";
+	print "<div class='col-md-4 pull-right'>";
 	print $_[7];
-	print "</td></tr></table>\n";
+	print "</div>";
+	print "</div>";
     print &ui_post_header($_[0]);
 }
 
@@ -817,6 +954,25 @@ sub theme_ui_print_unbuffered_header {
     $args[9] .= " data-pagescroll=true";
     $args[11] = '<i data="unbuffered"></i>';
     &ui_print_header(@args);
+}
+
+=head2 popup_header([title], [head-stuff], [body-stuff], [no-body])
+
+Outputs a page header, suitable for a popup window. If no title is given,
+absolutely no decorations are output. Also useful in framesets. The parameters
+are :
+
+=item title - Title text for the popup window.
+
+=item head-stuff - HTML to appear in the <head> section.
+
+=item body-stuff - HTML attributes to be include in the <body> tag.
+
+=item no-body - If set to 1, don't generate a body tag
+
+=cut
+sub theme_popup_header {
+    print "<h4>$_[0]</h4>\n";
 }
 
 sub theme_ui_print_footer {
@@ -850,10 +1006,20 @@ sub theme_footer {
     			$url = "/".&get_module_name()."/$url";
 			}
     		$url = "$gconfig{'webprefix'}$url" if ($url =~ /^\//);
-    		print "<a class='btn btn-primary btn-sm' href=\"$url\">",&text('main_return', $_[$i+1]),"</a>\n";
+    		print "<a class='btn btn-primary btn-sm' href=\"$url\">\
+    		<i class='fa fa-arrow-left'></i> ",&text('main_return', $_[$i+1]),"</a>\n";
 		}
 	}
     print "</div>\n";
+}
+
+=head2 popup_footer([no-body])
+
+Outputs html for a footer for a popup window, started by popup_header.
+
+=cut
+sub theme_popup_footer {
+    return '';
 }
 
 sub theme_ui_config_link {
@@ -1091,7 +1257,7 @@ sub theme_ui_date_input {
     my $rv;
     $rv .= "<span class='ui_data'>";
     # $rv .= "<div class='input-group date'>";
-    $rv .= "<input type='text' class='form-control date-time-picker' value='$day/$month/$year'\
+    $rv .= "<input type='text' class='form-control date-time-picker input-sm' value='$day/$month/$year'\
     data-day='$dayname' data-month='$monthname' data-year='$yearname'/>";
     $rv .= &ui_hidden($dayname, $day);
     $rv .= &ui_hidden($monthname, $month);

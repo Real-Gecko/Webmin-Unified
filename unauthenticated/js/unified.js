@@ -133,7 +133,7 @@ $(document).on('click', 'a.help', function(e) {
     });
 });
 
-/* File chooser */
+/* Chooser */
 $(document).on('click', '.chooser-open', function(e) {
     e.preventDefault();
     var url = $(this).attr('data-url');
@@ -178,6 +178,21 @@ $(document).on('click', '.chooser-open', function(e) {
                 $(table).parent().enscroll({
                     addPaddingToPane: false,
                     scrollIncrement: 50,
+                });
+            });
+            $chooser.find('.modal-body select').each(function(index, select) {
+                var liveSearch = select.length > 8;
+                $(select).selectpicker({
+                    style: 'btn-default btn-sm',
+                    size: 8,
+                    liveSearch: liveSearch,
+                    actionsBox: true
+                });
+            })
+            .on('shown.bs.select', function() {
+                 $(this).prev('div.dropdown-menu').find('ul').enscroll({
+                    addPaddingToPane: false,
+                    scrollIncrement: 100,
                 });
             });
             $chooser.find('.modal-body').fadeTo('fast', 1);
@@ -235,6 +250,13 @@ $(document).on('click', 'a.chooser-url:not([href])', function() {
     var file = $(this).data('file');
     $chooser = $('#modal');
     $chooser.data.ifield.value = file;
+    $chooser.modal('hide');
+});
+
+$(document).on('click', 'a.user-chooser', function() {
+    var user = $(this).data('user');
+    $chooser = $('#modal');
+    $chooser.data.ifield.value = user;
     $chooser.modal('hide');
 });
 
@@ -355,7 +377,7 @@ function updateContent(response, url) {
         // console.log(select.id);
         var liveSearch = select.length > 8;
         // Опять костыли
-        if(select.id != 'mins' && select.id != 'hours' && select.id != 'days') {
+        if(select.name != 'mins' && select.name != 'hours' && select.name != 'days') {
             $(select).selectpicker({
                 style: 'btn-default btn-sm',
                 size: 8,
@@ -368,9 +390,11 @@ function updateContent(response, url) {
                 callback: function(e) {
                     console.log(e)
                     if(e.attributeName == 'disabled' && e.newValue == 'disabled') {
-                        $('[data-id="' + select.id + '"').addClass('disabled')
+                        // $('[data-id="' + select.id + '"').addClass('disabled')
+                        $(select).prevAll('.dropdown-toggle').addClass('disabled');
                     } else if(e.attributeName == 'disabled' && e.newValue == undefined) {
-                        $('[data-id="' + select.id + '"').removeClass('disabled')
+                        // $('[data-id="' + select.id + '"').removeClass('disabled')
+                        $(select).prevAll('.dropdown-toggle').removeClass('disabled');
                     }
                 }
             });
@@ -379,7 +403,7 @@ function updateContent(response, url) {
     .on('shown.bs.select', function() {
          $(this).prev('div.dropdown-menu').find('ul').enscroll({
             addPaddingToPane: false,
-            scrollIncrement: 50,
+            scrollIncrement: 100,
         });
     });
     $('#content .bootstrap-select input[type="text"]').addClass('input-sm');
@@ -401,7 +425,7 @@ function updateContent(response, url) {
     });
 
     /* Ajaxify everything */
-    $.each($('#content a[href]:not(.ajax):not(.ui_tab):not(.help):not([data-toggle])'),
+    $.each($('#content a[href]:not(.ajax):not(.ui_tab):not(.help):not([data-toggle]):not([target])'),
     function(index, link) {
         if($(link).attr('href').indexOf(url) !== 0 & $(link).attr('href').indexOf('/') !==0) {
             $(link).attr('href', url + '/' + $(link).attr('href'));
