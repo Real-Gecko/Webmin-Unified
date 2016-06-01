@@ -1,3 +1,4 @@
+// var formSubmitter;
 window.onerror = function(errMsg, url, lineNumber, colNum, err) {
     // alert("Error caught");
     $('#content').html(
@@ -19,13 +20,14 @@ $(document).on('submit', 'form', function (e) {
     $('.enscroll-track').fadeTo('fast', 0);
     $('.rotor').fadeIn('fast');
     var $form = $(this);
-    var url = $form.attr('action');
+    var url = this.attributes.action.value;
     var progress = 0;
     var unbuffered = false;
+    var extra = formSubmitter ? '&' + formSubmitter.name + '=' + formSubmitter.value : '';
     if(this.method == "post") {     //While submitting post form, response sometimes come in chunks.
         $.ajax({                    // Deal with it!
-            url: this.action,
-            data: $form.serialize(),
+            url: url,
+            data: $form.serialize() + extra,
             method: 'POST',
             xhr: function () {
                 var xhr = new window.XMLHttpRequest();
@@ -39,11 +41,12 @@ $(document).on('submit', 'form', function (e) {
                         }
                     }
                     if(unbuffered) {
-                        var html = '<div>' + xhr.responseText.substring(progress) + '</div>';
-                        var div = $(html).hide().appendTo('#content')
-                        $(div).fadeIn('fast', function() {
-                            $(this).contents().unwrap();    //Niiiice
-                        })
+                        // var html = '<div>' + xhr.responseText.substring(progress) + '</div>';
+                        // var div = $(html).hide().appendTo('#content')
+                        // $(div).fadeIn('fast', function() {
+                        //     $(this).contents().unwrap();    //Niiiice
+                        // })
+		                $('#content').html(xhr.responseText); // This is stupid, but oh well...
                         $('#content').scrollTop(0 + $('#content')[0].scrollHeight);
                         // $('#content').stop(true, true).animate({
                         //     scrollTop: 0 + $('#content')[0].scrollHeight
@@ -56,7 +59,9 @@ $(document).on('submit', 'form', function (e) {
         })
         .done(function(response) {
             if(unbuffered) {
+                // $('#content').html(response); // This is stupid, but oh well...
                 updateContent(response, url);
+                // $('#content').scrollTop(0 + $('#content')[0].scrollHeight);
             } else {
                 $('#content').html(response);
                 updateContent(response, url);
@@ -75,7 +80,7 @@ $(document).on('submit', 'form', function (e) {
         //     $('.rotor').fadeOut('fast');
         // });
     } else {
-        $.get(this.action, $form.serialize())
+        $.get(url, $form.serialize())
         .always(function(response) {
             $('#content').html(response);
             updateContent(response, url);
@@ -84,6 +89,14 @@ $(document).on('submit', 'form', function (e) {
             $('.rotor').fadeOut('fast');
         });
     }
+});
+
+$(document).on('click', 'input[type="submit"]', function() {
+	if(this.name.length > 0) {
+		formSubmitter = this;
+	} else {
+		formSubmitter = undefined;
+	}
 });
 
 $(document).on('click', 'a.ajax', function(e) {
@@ -290,9 +303,6 @@ $(document).ready(function() {
         } else {
             $('.scrollup').fadeOut();
         }
-        console.clear();
-        console.log($(this).scrollTop(), $(window).height(), this.scrollHeight)
-
         if ($(this).scrollTop() + $(window).height() < this.scrollHeight) {
             $('.scrolldown').fadeIn();
         } else {
@@ -367,7 +377,6 @@ function updateContent(response, url) {
     $('#content [data-toggle="table"]').each(function(index, table) {
         // Skip tables with no header
         var head = $(table).has('thead')[0];
-        // console.log(table)
         if(head) {
             try {
                 $(table).bootstrapTable({
@@ -392,7 +401,6 @@ function updateContent(response, url) {
 
     /* Make selects rock */
     $('#content select').each(function(index, select) {
-        // console.log(select.id);
         var liveSearch = select.length > 8;
         // Опять костыли
         if(select.name != 'mins' && select.name != 'hours' && select.name != 'days') {
@@ -406,7 +414,6 @@ function updateContent(response, url) {
             $(select).attrchange({
                 trackValues: true,
                 callback: function(e) {
-                    console.log(e)
                     if(e.attributeName == 'disabled' && e.newValue == 'disabled') {
                         // $('[data-id="' + select.id + '"').addClass('disabled')
                         $(select).prevAll('.dropdown-toggle').addClass('disabled');

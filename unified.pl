@@ -470,15 +470,15 @@ sub theme_ui_submit {
     my ($label, $name, $dis, $tags) = @_;
     my $rv;
     $rv = "<input class='ui_submit btn btn-sm btn-primary' type='submit'".
-           ($name ne '' ? " name=\"".&quote_escape($name)."\"" : "").
-           ($name ne '' ? " id=\"".&quote_escape($name)."\"" : "").
-           " value=\"".&quote_escape($label)."\"".
+           ($name ne '' ? " name='".&quote_escape($name)."'" : "").
+           ($name ne '' ? " id='".&quote_escape($name)."'" : "").
+           " value='".&quote_escape($label)."'".
            ($dis ? " disabled=true" : "").
            ($tags ? " ".$tags : "").">\n";
     # Duplicate input as hidden for AJAX form submission
-    $rv .= "<input type='hidden'".
-           ($name ne '' ? " name=\"".&quote_escape($name)."\"" : "").
-           " value=\"".&quote_escape($label)."\">\n";
+    # $rv .= "<input type='hidden'".
+    #       ($name ne '' ? " name=\"".&quote_escape($name)."\"" : "").
+    #       " value=\"".&quote_escape($label)."\">\n";
     return $rv;
 }
 
