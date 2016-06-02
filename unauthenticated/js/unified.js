@@ -89,7 +89,7 @@ $(document).on('submit', 'form', function (e) {
             $('.rotor').fadeOut('fast');
         });
     }
-	// History.pushState({}, document.title, url);
+	History.pushState({}, document.title, url);
 });
 
 $(document).on('click', 'input[type="submit"]', function() {
@@ -103,26 +103,26 @@ $(document).on('click', 'input[type="submit"]', function() {
 $(document).on('click', 'a.ajax', function(e) {
     e.preventDefault();
     var url = $(this).attr('href');
-    $('#content').fadeTo('fast', 0);
-    $('.enscroll-track').fadeTo('fast', 0);
-    $('.rotor').fadeIn('fast');
-    $('#content').html('');
-    var progress = 0;
-    $.ajax({
-        url: url,
-        async: true,
-        dataType: 'text',
-    })
-    .done(function(response) {
-        $('#content').html(response);
-        updateContent(response, url);
-    })
-    .always(function() {
-        $('#content').stop(true, true).scrollTop(0).fadeTo('fast', 1);
-        $('.enscroll-track').stop(true, true).scrollTop(0).fadeTo('fast', 1);
-        $('.rotor').fadeOut('fast');
-    });
-	History.pushState({}, document.title, url);
+    // $('#content').fadeTo('fast', 0);
+    // $('.enscroll-track').fadeTo('fast', 0);
+    // $('.rotor').fadeIn('fast');
+    // $('#content').html('');
+    // var progress = 0;
+    // $.ajax({
+    //     url: url,
+    //     async: true,
+    //     dataType: 'text',
+    // })
+    // .done(function(response) {
+    //     $('#content').html(response);
+    //     updateContent(response, url);
+    // })
+    // .always(function() {
+    //     $('#content').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+    //     $('.enscroll-track').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+    //     $('.rotor').fadeOut('fast');
+    // });
+	History.pushState({type: 'link'}, document.title, url);
 });
 
 /* Fix table filter 0x0D form submission*/
@@ -492,50 +492,155 @@ $(document).on('change', '.select-auto-submit', function(e) {
 
 /* Dynamically reload virtul server menu */
 $(document).on('change', '#domain-selector', function() {
-    var that = this;
+    // var that = this;
     // $('.vlink').each(function(index, link) {
     //     $(this).attr('href', $(this).attr('href').replace(/(dom=)[^\&]+/,'$1' + that.value));
     //     $(this).attr('href', $(this).attr('href').replace(/(parent=)[^\&]+/,'$1' + that.value));
     // });
-    var url = 'get_domain_menu.cgi?dom=' + this.value;
-    $('#content').fadeTo('fast', 0);
-    $('.enscroll-track').fadeTo('fast', 0);
-    $('.rotor').fadeIn('fast');
-    $('#content').html('');
-    var progress = 0;
-    $.ajax({
-        url: url,
-        async: true,
-        dataType: 'text',
-    })
-    .done(function(response) {
-        $('#vserver-doms').html(response);
-        /* Make domain selector cool */
-        // $('#vserver-doms select').each(function(index, select) {
-        //     var liveSearch = select.length > 8;
-            // $(select).selectpicker({
-            //     style: 'btn-default btn-sm',
-            //     size: 8,
-            //     liveSearch: liveSearch,
-            //     actionsBox: true
-            // });
-        // });
-        var liveSearch = $('#domain-selector')[0].length > 8;
-        $('#domain-selector').selectpicker({
-            style: 'btn-default btn-sm',
-            size: 8,
-            liveSearch: liveSearch,
-            actionsBox: true
-        });
-        /* Also make dropdown toggle on hover */
-        $('#vserver-doms [data-hover="dropdown"]').dropdownHover();
-    })
-    .always(function() {
-        // $('#content').stop(true, true).scrollTop(0).fadeTo('fast', 1);
-        // $('.enscroll-track').stop(true, true).scrollTop(0).fadeTo('fast', 1);
-        // $('.rotor').fadeOut('fast');
-        /* Navigate to domain edition form */
-        var url = 'virtual-server/edit_domain.cgi?dom=' + that.value;
+    // var url = '/get_domain_menu.cgi?dom=' + this.value;
+    var url = '/virtual-server/edit_domain.cgi?dom=' + this.value;
+    // $('#content').fadeTo('fast', 0);
+    // $('.enscroll-track').fadeTo('fast', 0);
+    // $('.rotor').fadeIn('fast');
+    // $('#content').html('');
+    // var progress = 0;
+    // $.ajax({
+    //     url: url,
+    //     async: true,
+    //     dataType: 'text',
+    // })
+    // .done(function(response) {
+    //     $('#vserver-doms').html(response);
+    //     /* Make domain selector cool */
+    //     // $('#vserver-doms select').each(function(index, select) {
+    //     //     var liveSearch = select.length > 8;
+    //         // $(select).selectpicker({
+    //         //     style: 'btn-default btn-sm',
+    //         //     size: 8,
+    //         //     liveSearch: liveSearch,
+    //         //     actionsBox: true
+    //         // });
+    //     // });
+    //     var liveSearch = $('#domain-selector')[0].length > 8;
+    //     $('#domain-selector').selectpicker({
+    //         style: 'btn-default btn-sm',
+    //         size: 8,
+    //         liveSearch: liveSearch,
+    //         actionsBox: true
+    //     });
+    //     /* Also make dropdown toggle on hover */
+    //     $('#vserver-doms [data-hover="dropdown"]').dropdownHover();
+    // })
+    // .always(function() {
+    //     // $('#content').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+    //     // $('.enscroll-track').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+    //     // $('.rotor').fadeOut('fast');
+    //     /* Navigate to domain edition form */
+    //     var url = 'virtual-server/edit_domain.cgi?dom=' + that.value;
+    //     $.ajax({
+    //         url: url,
+    //         async: true,
+    //         dataType: 'text',
+    //     })
+    //     .done(function(response) {
+    //         $('#content').html(response);
+    //         updateContent(response, url);
+    //     })
+    //     .always(function(response) {
+    //         $('#content').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+    //         $('.enscroll-track').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+    //         $('.rotor').fadeOut('fast');
+    //     });
+    // });
+    History.pushState({type: 'domain-selector', domid: this.value}, document.title, url);
+});
+
+History.Adapter.bind(window,'statechange',function() {
+	var State = History.getState();
+    var url = State.url;
+    var data = State.data;
+    if(State.data.type == 'link') {
+	    $('#content').fadeTo('fast', 0);
+	    $('.enscroll-track').fadeTo('fast', 0);
+	    $('.rotor').fadeIn('fast');
+	    $('#content').html('');
+	    var progress = 0;
+	    $.ajax({
+	        url: url,
+	        async: true,
+	        dataType: 'text',
+	    })
+	    .done(function(response) {
+	        $('#content').html(response);
+	        updateContent(response, url);
+	    })
+	    .always(function() {
+	        $('#content').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+	        $('.enscroll-track').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+	        $('.rotor').fadeOut('fast');
+	    });
+    }
+    if(State.data.type == 'domain-selector') {
+	    // var url = '/get_domain_menu.cgi?dom=' + this.value;
+	    // $('#content').fadeTo('fast', 0);
+	    // $('.enscroll-track').fadeTo('fast', 0);
+	    // $('.rotor').fadeIn('fast');
+	    // $('#content').html('');
+	    // var progress = 0;
+	    // $.ajax({
+	    //     url: url,
+	    //     async: true,
+	    //     dataType: 'text',
+	    // })
+	    // .done(function(response) {
+	    //     $('#vserver-doms').html(response);
+	    //     /* Make domain selector cool */
+	    //     // $('#vserver-doms select').each(function(index, select) {
+	    //     //     var liveSearch = select.length > 8;
+	    //         // $(select).selectpicker({
+	    //         //     style: 'btn-default btn-sm',
+	    //         //     size: 8,
+	    //         //     liveSearch: liveSearch,
+	    //         //     actionsBox: true
+	    //         // });
+	    //     // });
+	    //     var liveSearch = $('#domain-selector')[0].length > 8;
+	    //     $('#domain-selector').selectpicker({
+	    //         style: 'btn-default btn-sm',
+	    //         size: 8,
+	    //         liveSearch: liveSearch,
+	    //         actionsBox: true
+	    //     });
+	    //     /* Also make dropdown toggle on hover */
+	    //     $('#vserver-doms [data-hover="dropdown"]').dropdownHover();
+	    // })
+	    // .always(function() {
+	    //     // $('#content').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+	    //     // $('.enscroll-track').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+	    //     // $('.rotor').fadeOut('fast');
+	    //     /* Navigate to domain edition form */
+	    //     var url = 'virtual-server/edit_domain.cgi?dom=' + data.domid;
+	    //     $.ajax({
+	    //         url: url,
+	    //         async: true,
+	    //         dataType: 'text',
+	    //     })
+	    //     .done(function(response) {
+	    //         $('#content').html(response);
+	    //         updateContent(response, url);
+	    //     })
+	    //     .always(function(response) {
+	    //         $('#content').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+	    //         $('.enscroll-track').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+	    //         $('.rotor').fadeOut('fast');
+	    //     });
+	    // });
+	    // var url = '/get_domain_menu.cgi?dom=' + this.value;
+	    $('#content').fadeTo('fast', 0);
+	    $('.enscroll-track').fadeTo('fast', 0);
+	    $('.rotor').fadeIn('fast');
+	    $('#content').html('');
+	    var progress = 0;
         $.ajax({
             url: url,
             async: true,
@@ -545,25 +650,45 @@ $(document).on('change', '#domain-selector', function() {
             $('#content').html(response);
             updateContent(response, url);
         })
-        .always(function(response) {
-            $('#content').stop(true, true).scrollTop(0).fadeTo('fast', 1);
-            $('.enscroll-track').stop(true, true).scrollTop(0).fadeTo('fast', 1);
-            $('.rotor').fadeOut('fast');
-        });
-    });
-});
-
-History.Adapter.bind(window,'statechange',function() {
-	var State = History.getState();
-	var data = State.data;
-	
-    $('#content').fadeTo('fast', 0);
-    $('.enscroll-track').fadeTo('fast', 0);
-    $('.rotor').fadeIn('fast');
-	$("#content").load(State.url, function() {
-		updateContent(undefined, State.url)
-        $('#content').stop(true, true).scrollTop(0).fadeTo('fast', 1);
-        $('.enscroll-track').stop(true, true).scrollTop(0).fadeTo('fast', 1);
-        $('.rotor').fadeOut('fast');
-	});
+	    .always(function() {
+		    var url = '/get_domain_menu.cgi?dom=' + data.domid;
+		    $.ajax({
+		        url: url,
+		        async: true,
+		        dataType: 'text',
+		    })
+		    .done(function(response) {
+		        $('#vserver-doms').html(response);
+		        /* Make domain selector cool */
+		        // $('#vserver-doms select').each(function(index, select) {
+		        //     var liveSearch = select.length > 8;
+		            // $(select).selectpicker({
+		            //     style: 'btn-default btn-sm',
+		            //     size: 8,
+		            //     liveSearch: liveSearch,
+		            //     actionsBox: true
+		            // });
+		        // });
+		        var liveSearch = $('#domain-selector')[0].length > 8;
+		        $('#domain-selector').selectpicker({
+		            style: 'btn-default btn-sm',
+		            size: 8,
+		            liveSearch: liveSearch,
+		            actionsBox: true
+		        });
+		        /* Also make dropdown toggle on hover */
+		        $('#vserver-doms [data-hover="dropdown"]').dropdownHover();
+		    })
+	        // $('#content').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+	        // $('.enscroll-track').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+	        // $('.rotor').fadeOut('fast');
+	        /* Navigate to domain edition form */
+	        // var url = 'virtual-server/edit_domain.cgi?dom=' + data.domid;
+	        .always(function(response) {
+	            $('#content').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+	            $('.enscroll-track').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+	            $('.rotor').fadeOut('fast');
+	        });
+	    });
+    }
 });
