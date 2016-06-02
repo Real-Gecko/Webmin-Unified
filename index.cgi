@@ -185,7 +185,7 @@ foreach my $tc (@tcats) {
 		foreach my $l (@incat) {
             $virtualmin_categories .= "<li>\
             <a class='ajax' href='$l->{'url'}'>\
-            <img src='virtual-server/images/$l->{'icon'}.png' width='24' height='24'>\
+            <img src='unified/virtual-server/images/$l->{'icon'}.png' width='24' height='24'>\
             $l->{'title'}</a></li>";
 	    }
     	$virtualmin_categories .= '</ul></li>';

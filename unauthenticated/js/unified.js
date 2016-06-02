@@ -89,6 +89,7 @@ $(document).on('submit', 'form', function (e) {
             $('.rotor').fadeOut('fast');
         });
     }
+	// History.pushState({}, document.title, url);
 });
 
 $(document).on('click', 'input[type="submit"]', function() {
@@ -121,6 +122,7 @@ $(document).on('click', 'a.ajax', function(e) {
         $('.enscroll-track').stop(true, true).scrollTop(0).fadeTo('fast', 1);
         $('.rotor').fadeOut('fast');
     });
+	History.pushState({}, document.title, url);
 });
 
 /* Fix table filter 0x0D form submission*/
@@ -296,6 +298,17 @@ $(document).ready(function() {
 		// scrollUpButtonClass: 'scroll-up',
 		// scrollDownButtonClass: 'scroll-down'
     });
+    
+    // var History = window.History; 
+
+    // History.Adapter.bind(window,'statechange',function() { // Note: We are using statechange instead of popstate
+    //     var State = History.getState();
+    //     $('#content').load(State.url);
+    //     /* Instead of the line above, you could run the code below if the url returns the whole page instead of just the content (assuming it has a `#content`):
+    //     $.get(State.url, function(response) {
+    //         $('#content').html($(response).find('#content').html()); });
+    //     */
+    //     });
 
     $('#content').scroll(function () {
         if ($(this).scrollTop() > 100) {
@@ -538,4 +551,19 @@ $(document).on('change', '#domain-selector', function() {
             $('.rotor').fadeOut('fast');
         });
     });
+});
+
+History.Adapter.bind(window,'statechange',function() {
+	var State = History.getState();
+	var data = State.data;
+	
+    $('#content').fadeTo('fast', 0);
+    $('.enscroll-track').fadeTo('fast', 0);
+    $('.rotor').fadeIn('fast');
+	$("#content").load(State.url, function() {
+		updateContent(undefined, State.url)
+        $('#content').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+        $('.enscroll-track').stop(true, true).scrollTop(0).fadeTo('fast', 1);
+        $('.rotor').fadeOut('fast');
+	});
 });

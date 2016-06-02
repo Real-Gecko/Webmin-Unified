@@ -1,4 +1,5 @@
 #!/bin/sh
+rm distrib/*
 FILES="*.cgi"
 TGDIR="./distrib/unified"
 #DISTR="./distrib"
