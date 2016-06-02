@@ -379,7 +379,9 @@ $(document).ready(function() {
             liveSearch: liveSearch,
             actionsBox: true
         });
-    })
+    });
+    
+    $('.bs-searchbox input').addClass('input-sm');
 });
 
 function updateContent(response, url) {
@@ -441,7 +443,7 @@ function updateContent(response, url) {
     .on('shown.bs.select', function() {
          $(this).prev('div.dropdown-menu').find('ul').enscroll({
             addPaddingToPane: false,
-            scrollIncrement: 100,
+            scrollIncrement: 75,
         });
     });
     $('#content .bootstrap-select input[type="text"]').addClass('input-sm');

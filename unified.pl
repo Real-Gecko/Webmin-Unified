@@ -1057,11 +1057,11 @@ sub theme_generate_icon {
 		}
 	}
     elsif ($_[2]) {
-    	print "<a href=\"$prefix_uri/$_[2]\" $_[3]><img src=\"$prefix_uri/$_[0]\" alt=\"\" $w $h><br>";
+    	print "<a href=\"$prefix_uri/$_[2]\" $_[3]><img src=\"$webprefix/images/$module_name/$_[0]\" alt=\"\" $w $h><br>";
     	print "$_[6]$_[1]</a>$_[7]\n";
 	}
     else {
-    	print "<img src=\"$prefix_uri/$_[0]\" alt=\"\" $w $h><br>",
+    	print "<img src=\"$webprefix/images/$module_name/$_[0]\" alt=\"\" $w $h><br>",
     	      "$_[6]$_[1]$_[7]\n";
 	}
 }
