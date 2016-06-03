@@ -495,3 +495,7 @@ td label {
 /*	position: absolute;*/
 /*	top: 0;*/
 /*}*/
+
+.pager li > a, .pager li > span {
+	line-height: 20px;
+}

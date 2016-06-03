@@ -1281,6 +1281,84 @@ sub theme_date_chooser_button {
     return '';
 }
 
+=head2 ui_page_flipper(message, [inputs, cgi], left-link, right-link, [far-left-link], [far-right-link], [below])
+
+Returns HTML for moving left and right in some large list, such as an inbox
+or database table. If only 5 parameters are given, no far links are included.
+If any link is undef, that array will be greyed out. The parameters are :
+
+=item message - Text or display between arrows.
+
+=item inputs - Additional HTML inputs to show after message.
+
+=item cgi - Optional CGI for form wrapping arrows to submit to.
+
+=item left-link - Link for left-facing arrow.
+
+=item right-link - Link for right-facing arrow.
+
+=item far-left-link - Link for far left-facing arrow, optional.
+
+=item far-right-link - Link for far right-facing arrow, optional.
+
+=item below - HTML to display below the arrows.
+
+=cut
+sub theme_ui_page_flipper {
+	my ($msg, $inputs, $cgi, $left, $right, $farleft, $farright, $below) = @_;
+	# my $rv = "<ul class='pagination'>";
+	# $rv .= &ui_form_start($cgi) if ($cgi);
+	$rv = &ui_form_start($cgi) if ($cgi);
+	my $rv .= "<ul class='pager'>";
+	
+	# Far left link, if needed
+	if (@_ > 5) {
+		if ($farleft) {
+			$rv .= "<li><a href='$farleft'>".
+			       "<i class='fa fa-angle-double-left'></i></a></li>";
+		} else {
+			$rv .= "<li class='disabled'><span class='fa fa-angle-double-left'></span></li>";
+		}
+	}
+	
+	# Left link
+	if ($left) {
+		$rv .= "<li><a href='$left'>".
+		       "<i class='fa fa-angle-left'></i></a></li>";
+	} else {
+		$rv .= "<li class='disabled'><span class='fa fa-angle-left'></span></li>";
+	}
+	# $rv .= "</ul>";
+	# Message and inputs
+	$rv .= $msg;
+	$rv .= " ".$inputs if ($inputs);
+
+	# $rv .= "<ul>";
+	
+	# Right link
+	if ($right) {
+		$rv .= "<li><a href='$right'>".
+		       "<i class='fa fa-angle-right'></i></a></li>";
+	} else {
+		$rv .= "<li class='disabled'><i class='fa fa-angle-right'></i></li>";
+	}
+	
+	# Far right link, if needed
+	if (@_ > 5) {
+		if ($farright) {
+			$rv .= "<li><a href='$farright'>".
+			       "<i class='fa fa-angle-double-right'></i></a></li>";
+		} else {
+			$rv .= "<li class='disabled'><i class='fa fa-angle-double-right'></i></li>";
+		}
+	}
+	
+	$rv .= "<br>".$below if ($below);
+	$rv .= "</ul>";
+	$rv .= &ui_form_end() if ($cgi);
+	return $rv;
+}
+
 sub theme_get_times_input {
     # return &theme_get_times_input(@_) if (defined(&theme_get_times_input));
     my ($job, $nospecial, $width, $msg) = @_;
@@ -1446,6 +1524,22 @@ else {
 		return \%sects;
 		}
 	}
+}
+
+=head2 ui_tabs_start_tabletab(name, tab)
+Behaves like ui_tabs_start_tab.
+=cut
+sub theme_ui_tabs_start_tabletab {
+	return &ui_tabs_start_tab(@_);
+	# return;
+}
+
+=head2 ui_tabs_end_tabletab
+Returns HTML for the end of a block started by ui_tabs_start_tabletab.
+=cut
+sub theme_ui_tabs_end_tabletab {
+    return "</div>\n";
+    # return;
 }
 
 sub list_virtualmin_domains {
